@@ -34,9 +34,7 @@ namespace SickBot
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
-            var storage = new AzureBlobStorage(Configuration["BlobStorageStateProviderConnectionString"], "bot-state");
-            services.AddSingleton<IStorage>(storage);
-            //services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddSingleton<IStorage, MemoryStorage>();
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();
@@ -44,14 +42,6 @@ namespace SickBot
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            // Register LUIS recognizer
-            services.AddSingleton<NotificationOfIllnessRecognizer>();
-
-            // Register the NotificationOfIllnessDialog.
-            services.AddSingleton<NotificationOfIllnessDialog>();
-
-            // Register the NotificationOfTeammateDialog.
-            services.AddSingleton<NotificationOfTeammateDialog>();
 
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();

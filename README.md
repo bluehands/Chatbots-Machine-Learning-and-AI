@@ -1,6 +1,14 @@
 # Chatbots, Machine Learning & AI
 
+This is a cook bock for developing a chat bot for Teams. The steps are in several branches to reduce the complexity of the code.
+
+Check out the **01_welcome_user** branch.
+
 ## Welcome User
+
+This is the reduced *Core Bot* Template from Visual Studio. The *IBot* is the *DialogAndWelcomeBot* with the *MainDialog*. So all incoming messages are routed to *DialogAndWelcomeBot* and then to *MainDialog*.
+
+In *DialogAndWelcomeBot* we create a adaptive card. *MainDialog* has a waterfall dialog with a prompt an echo.
 
 ## Deploy to Azure
 

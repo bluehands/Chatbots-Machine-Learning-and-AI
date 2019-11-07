@@ -15,12 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Cards\HelpCard_de.json" />
     <Content Remove="Cards\WelcomeCard_de.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Cards\HelpCard_de.json" />
     <EmbeddedResource Include="Cards\WelcomeCard_de.json" />
   </ItemGroup>
 
