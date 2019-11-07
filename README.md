@@ -34,16 +34,6 @@ Download ngrok and start **ngrok http 3978 -host-header="localhost:3978**
 
 ## Add LUIS
 
+Check out the **02_add_luis** branch.
+
 We just created a bot which accepts messages. With this, we could create a command oriented UI like a console app. But we want a more smart solution. We will use LUIS to add natural language processing to catch the intent of the user.
-
-## Add Authentication to Azure AD
-
-See <https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication?view=azure-bot-service-4.0&tabs=csharp%2Cbot-oauth>
-
-* Check connection and paste the token to <https://jwt.ms/>
-
-## Add domain logic for notification of illness
-
-Now we have all details of the user by authentication and the indent. We will start adding the domain logic now. Notify back office and cancel appointments.
-
-## Add Teams channel
