@@ -7,6 +7,5 @@ namespace SickBot
     {
         public string Text { get; set; }
         public DateTime? SickUntil { get; set; }
-        public TokenResponse TokenResponse { get; set; }
     }
 }

@@ -11,18 +11,16 @@ namespace SickBot.Dialogs
 {
     public class NotificationOfIllnessDialog : CancelAndHelpDialog
     {
-        public NotificationOfIllnessDialog(NotificationOfTeammateDialog notificationOfTeammateDialog) : base(nameof(NotificationOfIllnessDialog))
+        public NotificationOfIllnessDialog() : base(nameof(NotificationOfIllnessDialog))
         {
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt), null, "de-de"));
             AddDialog(new DateResolverDialog());
-            AddDialog(notificationOfTeammateDialog);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
                 SickUntilDateStepAsync,
                 ConfirmStepAsync,
-                FinalStepAsync,
-                NotifyTeammateAsync
+                FinalStepAsync
             }));
 
             // The initial child Dialog to run.
@@ -57,15 +55,11 @@ namespace SickBot.Dialogs
             if ((bool)stepContext.Result)
             {
                 var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Options;
-
-                return await stepContext.NextAsync(notificationOfIllnessDetails, cancellationToken);
+                return await stepContext.EndDialogAsync(notificationOfIllnessDetails, cancellationToken);
             }
 
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
-        private async Task<DialogTurnResult> NotifyTeammateAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            return await stepContext.BeginDialogAsync(nameof(NotificationOfTeammateDialog), stepContext.Result, cancellationToken);
-        }
+
     }
 }

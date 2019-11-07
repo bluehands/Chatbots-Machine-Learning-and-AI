@@ -1,43 +1,29 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace SickBot.Dialogs
 {
-    public class MainDialog : LogoutDialog
+    public class MainDialog : ComponentDialog
     {
         private readonly NotificationOfIllnessRecognizer m_LuisRecognizer;
-        private readonly IStatePropertyAccessor<UserData> m_UserStateAccessors;
         protected readonly ILogger m_Logger;
 
         // Dependency injection uses this constructor to instantiate MainDialog
-        public MainDialog(NotificationOfIllnessRecognizer luisRecognizer, NotificationOfIllnessDialog notificationOfIllnessDialog ,UserState userState, IConfiguration configuration, ILogger<MainDialog> logger) : base(nameof(MainDialog), configuration["ConnectionName"])
+        public MainDialog(NotificationOfIllnessRecognizer luisRecognizer, NotificationOfIllnessDialog notificationOfIllnessDialog , ILogger<MainDialog> logger) : base(nameof(MainDialog))
         {
             m_LuisRecognizer = luisRecognizer;
-            m_UserStateAccessors = userState.CreateProperty<UserData>(nameof(UserData));
             m_Logger = logger;
-            AddDialog(new OAuthPrompt(nameof(OAuthPrompt), new OAuthPromptSettings
-            {
-                ConnectionName = ConnectionName,
-                Text = "Bitte melde Dich an",
-                Title = "Bei Azure AD anmelden",
-                Timeout = 300000, // User has 5 minutes to login (1000 * 60 * 5)
-            }));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(notificationOfIllnessDialog);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
-                PromptStepAsync,
-                LoginStepAsync,
                 IntroStepAsync,
                 ActStepAsync,
                 FinalStepAsync,
@@ -46,33 +32,7 @@ namespace SickBot.Dialogs
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
         }
-
-        private async Task<DialogTurnResult> PromptStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
-        }
-        private async Task<DialogTurnResult> LoginStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            // Get the token from the previous step. Note that we could also have gotten the
-            // token directly from the prompt itself.
-            if (stepContext.Result is TokenResponse tokenResponse)
-            {
-                var conversationData = await m_UserStateAccessors.GetAsync(stepContext.Context, () => new UserData(), cancellationToken);
-                conversationData.TokenResponse = tokenResponse;
-                if (!conversationData.HasShownToken)
-                {
-                    conversationData.HasShownToken = true;
-                    await m_UserStateAccessors.SetAsync(stepContext.Context, conversationData, cancellationToken);
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text("Du bist angemeldet"), cancellationToken);
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(tokenResponse.Token), cancellationToken);
-                }
-                return await stepContext.NextAsync(tokenResponse, cancellationToken);
-            }
-
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text("Die Anmeldung ist fehlgeschlagen. Bitte versuche es nochmal."), cancellationToken);
-            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
-        }
-
+        
         private async Task<DialogTurnResult> IntroStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             if (!m_LuisRecognizer.IsConfigured)
@@ -82,12 +42,7 @@ namespace SickBot.Dialogs
 
                 return await stepContext.NextAsync(null, cancellationToken);
             }
-
-            
-            var userData = await m_UserStateAccessors.GetAsync(stepContext.Context, () => new UserData(), cancellationToken);
-            var jwtToken = new JwtSecurityToken(userData.TokenResponse.Token);
-            var givenNameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type.Equals("given_name"));
-            var messageText = stepContext.Options?.ToString() ?? $"{givenNameClaim?.Value}: Wie kann ich Dir helfen?\nSage sowas wie \"Ich bin bis morgen krank\"";
+            var messageText = stepContext.Options?.ToString() ?? "Wie kann ich Dir helfen?\nSage sowas wie \"Ich bin bis morgen krank\"";
             var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
         }
@@ -107,13 +62,10 @@ namespace SickBot.Dialogs
                 case Luis.SickBot.Intent.NotificationOfIllness:
 
                     // Initialize NotificationOfIllnessDetails with any entities we may have found in the response.
-                    var userData = await m_UserStateAccessors.GetAsync(stepContext.Context, () => new UserData(), cancellationToken);
-
                     var notificationOfIllnessDetails = new NotificationOfIllnessDetails()
                     {
                         Text = luisResult.Text,
                         SickUntil = luisResult.SickUntilTimex,
-                        TokenResponse= userData.TokenResponse,
                     };
 
                     // Run the Dialog giving it whatever details we have from the LUIS call, it will fill out the remainder.

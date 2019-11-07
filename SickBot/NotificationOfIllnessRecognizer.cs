@@ -11,7 +11,7 @@ namespace SickBot
 {
     public class NotificationOfIllnessRecognizer : IRecognizer
     {
-        private readonly LuisRecognizer _recognizer;
+        private readonly LuisRecognizer m_Recognizer;
 
         public NotificationOfIllnessRecognizer(IConfiguration configuration)
         {
@@ -23,18 +23,18 @@ namespace SickBot
                     configuration["LuisAPIKey"],
                     "https://" + configuration["LuisAPIHostName"]);
 
-                _recognizer = new LuisRecognizer(luisApplication);
+                m_Recognizer = new LuisRecognizer(luisApplication);
             }
         }
 
         // Returns true if luis is configured in the appsettings.json and initialized.
-        public virtual bool IsConfigured => _recognizer != null;
+        public virtual bool IsConfigured => m_Recognizer != null;
 
         public virtual async Task<RecognizerResult> RecognizeAsync(ITurnContext turnContext, CancellationToken cancellationToken)
-            => await _recognizer.RecognizeAsync(turnContext, cancellationToken);
+            => await m_Recognizer.RecognizeAsync(turnContext, cancellationToken);
 
         public virtual async Task<T> RecognizeAsync<T>(ITurnContext turnContext, CancellationToken cancellationToken)
             where T : IRecognizerConvert, new()
-            => await _recognizer.RecognizeAsync<T>(turnContext, cancellationToken);
+            => await m_Recognizer.RecognizeAsync<T>(turnContext, cancellationToken);
     }
 }
