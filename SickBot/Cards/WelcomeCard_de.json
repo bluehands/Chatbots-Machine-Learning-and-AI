@@ -1,0 +1,30 @@
+﻿{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://sickbot.z6.web.core.windows.net/sickboticon.png",
+      "size": "Stretch"
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "Medium",
+      "size": "default",
+      "weight": "Bolder",
+      "text": "Willkommen beim KrankBot!",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "TextBlock",
+      "size": "default",
+      "isSubtle": true,
+      "text": "Ich unterstütze Dich bei Deiner Krankmeldung",
+      "wrap": true,
+      "maxLines": 0
+    }
+  ],
+  "lang": "de"
+}
