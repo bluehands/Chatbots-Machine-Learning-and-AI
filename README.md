@@ -88,3 +88,9 @@ We also show the token in the chat the first time after login. To remember *firs
 
     For authentication in Bot Emulator, ngrok has to be configured globaly. 
     Also configure all secrets in the bot configuration dialog.
+
+## Add domain logic for notification of illness
+
+Now we have all details of the user by authentication and recognizing indent. We will start adding the domain logic now. Notify back office and cancel appointments.
+
+Check out the **04_add_domain** branch.
