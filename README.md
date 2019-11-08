@@ -15,17 +15,17 @@ In *DialogAndWelcomeBot* we create a adaptive card. *MainDialog* has a waterfall
 See <https://docs.microsoft.com/de-de/azure/bot-service/bot-builder-deploy-az-cli?view=azure-bot-service-4.0&tabs=csharp> for a detailed description.
 
 * Create a Azure AD App Registration
-    * **az ad app create --display-name "SickBot" --password "AtLeastSixteenCharacters_0" --available-to-other-tenants**
-    * Remember the **AppId** and **PWD** for later use
+  * **az ad app create --display-name "SickBot" --password "AtLeastSixteenCharacters_0" --available-to-other-tenants**
+  * Remember the **AppId** and **PWD** for later use
 * Deploy with ARM Template from the Visual Studio Solution  
-    * Navigate to the **DeploymentTemplates** Sub directory
-    * **az group deployment create --name "SickBotDeployment" --resource-group "SickBot" --template-file "template-with-preexisting-rg.json" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="SickBot" newWebAppName="SickBot" newAppServicePlanName="SickBot" appServicePlanLocation="westeurope"**
+  * Navigate to the **DeploymentTemplates** Sub directory
+  * **az group deployment create --name "SickBotDeployment" --resource-group "SickBot" --template-file "template-with-preexisting-rg.json" --parameters appId="<msa-app-guid>" appSecret="<msa-app-password>" botId="SickBot" newWebAppName="SickBot" newAppServicePlanName="SickBot" appServicePlanLocation="westeurope"**
 * Prepare code for deployment
-    * Navigate to root directory
-    * **az bot prepare-deploy --lang Csharp --code-dir "." --proj-file-path "SickBot.csproj"**
+  * Navigate to root directory
+  * **az bot prepare-deploy --lang Csharp --code-dir "." --proj-file-path "SickBot.csproj"**
 * Deploy code
-    * Deploy with Visual Studio
-    * Update the settings
+  * Deploy with Visual Studio
+  * Update the settings
 * Test in Web Chat
 
 ## Debug with ngrok
@@ -106,6 +106,8 @@ We will now add the bot to the Teams Channel.
 Check out the **05_add_teams** branch.
 
 See <https://docs.microsoft.com/de-de/azure/bot-service/bot-builder-basics-teams?view=azure-bot-service-4.0&tabs=csharp>
+
+We have a special activity handler for teams which handle teams specialties. Now we will add the bot to the teams channel.
 
 * Add the teams channel to the bot registration
 * Download Teams AppStudio and create new app
