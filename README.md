@@ -74,6 +74,4 @@ In the next step we want to authenticate the user in preparation to add our doma
 
 Check out the **03_add_authentication** branch.
 
-See <https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication?view=azure-bot-service-4.0&tabs=csharp%2Cbot-oauth>
 
-* Check connection and paste the token to <https://jwt.ms/>
