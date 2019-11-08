@@ -47,6 +47,7 @@ namespace SickBot.Dialogs
             }
             var appointmentsMsg = "Du hast folgende Termine die ich absagen kann.";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(appointmentsMsg, appointmentsMsg, InputHints.IgnoringInput), cancellationToken);
+            
             // Reply to the activity we received with an activity.
             var reply = MessageFactory.Attachment(new List<Attachment>());
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
