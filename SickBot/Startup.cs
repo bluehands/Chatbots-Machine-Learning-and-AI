@@ -49,10 +49,7 @@ namespace SickBot
 
             // Register the NotificationOfIllnessDialog.
             services.AddSingleton<NotificationOfIllnessDialog>();
-
-            // Register the NotificationOfTeammateDialog.
-            services.AddSingleton<NotificationOfTeammateDialog>();
-
+            
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();
 
