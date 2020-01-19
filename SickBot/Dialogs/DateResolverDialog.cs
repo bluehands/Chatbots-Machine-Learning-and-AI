@@ -9,8 +9,6 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Recognizers.Text;
-using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
-using Constants = Microsoft.Recognizers.Text.DataTypes.TimexExpression.Constants;
 
 namespace SickBot.Dialogs
 {

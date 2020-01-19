@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.Recognizers.Text;
 using SickBot;
-using SickBot.Dialogs;
 
 namespace Luis
 {

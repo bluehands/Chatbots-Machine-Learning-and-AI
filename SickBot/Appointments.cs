@@ -1,50 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Bot.Schema;
 
 namespace SickBot
 {
-    public class Appointments
+    public class Appointments 
     {
-        private readonly string m_Token;
-        private readonly DateTime m_AppointmentsUntil;
+        private readonly ExchangeClient m_ExchangeClient;
 
-        public Appointments(string token, DateTime appointmentsUntil)
+        public Appointments(TokenResponse tokenResponse, ExchangeSettings settings) 
         {
-            m_Token = token;
-            m_AppointmentsUntil = appointmentsUntil;
+            m_ExchangeClient = new ExchangeClient(new Uri(settings.ConnectionUrl), new System.Net.NetworkCredential(settings.ConnectionUserName, settings.ConnectionUserPassword), tokenResponse.GetUPNClaim().Value);
+        }
+        public List<Appointment> GetAppointments(DateTime meetingsUntil)
+        {
+            return m_ExchangeClient.GetMeetings(DateTime.Today, meetingsUntil).Select(
+                m => new Appointment
+                {
+                    Id = m.MeetingId,
+                    Subject = m.Subject,
+                    Start = m.Start,
+                    End = m.End
+                }).ToList();
         }
 
-        public List<Appointment> GetAppointments()
+        public void CancelAllAppointments(DateTime meetingsUntil, string cancelMessage)
         {
-            return new List<Appointment>
+            foreach (var meeting in m_ExchangeClient.GetMeetings(DateTime.Today, meetingsUntil))
             {
-                new Appointment(m_Token) {Title = "Treffen mit Lars", Start = GetFullDate(DateTime.Now.AddHours(2)), End = GetFullDate(DateTime.Now.AddHours(3))},
-                new Appointment(m_Token) {Title = "Daily", Start = GetFullDate(DateTime.Now.AddHours(25)), End =GetFullDate( DateTime.Now.AddHours(26))}
-            };
-        }
-
-        public DateTime GetFullDate(DateTime date)
-        {
-            return new DateTime(date.Year, date.Month, date.Day, date.Hour, 0, 0);
+                m_ExchangeClient.CancelMeeting(meeting.MeetingId, cancelMessage);
+            }
         }
     }
+
     public class Appointment
     {
-        private readonly string m_Token;
-
-        public Appointment(string token)
-        {
-            m_Token = token;
-        }
-        public string Title { get; set; }
+        public string Id { get; set; }
+        public string Subject { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-        public void Cancel()
-        {
-
-        }
 
     }
 }

@@ -1,19 +1,24 @@
-﻿namespace SickBot
+﻿using Microsoft.Bot.Schema;
+
+namespace SickBot
 {
     public class BackOffice
     {
-        private readonly string m_Token;
 
-        public BackOffice(string token)
+        public BackOffice(TokenResponse tokenResponse)
         {
-            m_Token = token;
+            TokenResponse = tokenResponse;
         }
 
-        public BackOfficeMember GetBackOfficeMember()
+        public TokenResponse TokenResponse { get; }
+
+        public virtual BackOfficeMember GetBackOfficeMember()
         {
-            return new BackOfficeMember {Name = "Lars", MailAddress = "lk@bluehands.de"};
+            return new BackOfficeMember { Name = "Lars", MailAddress = "krank@bluehands.de" };
         }
+
     }
+   
 
     public class BackOfficeMember
     {

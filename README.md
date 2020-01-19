@@ -114,3 +114,11 @@ We have a special activity handler for teams which handle teams specialties. Now
 * Add existing bot
 * Remember to add *token.botframework.com* to the *Domains and Permissions*
 * Install the bot
+
+## Add Exchange support
+
+We will use the Exchange Web Service API to get the list of appointments, cancel them and send mails. Add the *Microsoft.Exchange.WebServices* Nuget package to the project
+
+To get the list of appointments and to send mails we will impersonate to the current user. In order to get the current user, we use the jwt-token and parse it. Add the *System.IdentityModel.Tokens.Jwt* to the project and parse the token. The *upn* claim contains the user Id to impersonate.
+
+See the *ExchangeClient*, *Appointments* and *ExchangeMailClient* class for details.
