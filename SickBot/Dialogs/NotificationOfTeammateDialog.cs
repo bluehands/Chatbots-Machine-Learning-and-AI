@@ -18,6 +18,8 @@ namespace SickBot.Dialogs
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
                 NotifyBackOfficeAsync,
+                PromptNotifyColleaguesAsync,
+                NotifyColleaguesAsync,
                 ShowAppointmentsAsync,
                 FinalStepAsync
             }));
@@ -31,18 +33,45 @@ namespace SickBot.Dialogs
             var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Options;
             var backOffice = new BackOffice(notificationOfIllnessDetails.TokenResponse);
             var backOfficeMember = backOffice.GetBackOfficeMember();
-            var mailClient=new ExchangeMailClient(notificationOfIllnessDetails.TokenResponse, m_ExchangeSettings);
+            var mailClient = new ExchangeMailClient(notificationOfIllnessDetails.TokenResponse, m_ExchangeSettings);
             var message = $"Dies ist eine automatisch generierte Nachricht. {notificationOfIllnessDetails.TokenResponse.GetNameClaim()?.Value} ist bis zum {notificationOfIllnessDetails.SickUntil.GetValueOrDefault():dd.MM.yyyy} krank und ist nicht im Büro."; ;
-            mailClient.SendMail(backOfficeMember.MailAddress,"Krankmeldung", message);
+            mailClient.SendMail(new[] { backOfficeMember.MailAddress }, "Krankmeldung", message);
             var msg = $"Ich habe {backOfficeMember.Name} vom Backoffice eine Mail ({backOfficeMember.MailAddress}) gesendet, daß Du bis zum {notificationOfIllnessDetails.SickUntil?.ToString("dd.MM.yyyy")} krank bist.";
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg, msg, InputHints.IgnoringInput), cancellationToken);
+            return await stepContext.NextAsync(notificationOfIllnessDetails, cancellationToken);
+        }
+        private async Task<DialogTurnResult> PromptNotifyColleaguesAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Options;
+            var colleagues = new Colleagues(notificationOfIllnessDetails.TokenResponse);
+            var colleagueNames = await colleagues.GetMyColleaguesName();
+            var messageText = $"Soll ich Deine Kollegen {string.Join(", ", colleagueNames)} bescheid geben?";
+            var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
+
+            return await stepContext.PromptAsync(nameof(ConfirmPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
+        }
+        private async Task<DialogTurnResult> NotifyColleaguesAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Options;
+            var sendNotificationToColleagues = (bool)stepContext.Result;
+            if (sendNotificationToColleagues)
+            {
+                var colleagues = new Colleagues(notificationOfIllnessDetails.TokenResponse);
+                var colleagueMailAddresses = await colleagues.GetMyColleaguesMailAddresses();
+                var mailClient = new ExchangeMailClient(notificationOfIllnessDetails.TokenResponse, m_ExchangeSettings);
+                var message = $"Dies ist eine automatisch generierte Nachricht. {notificationOfIllnessDetails.TokenResponse.GetNameClaim()?.Value} ist bis zum {notificationOfIllnessDetails.SickUntil.GetValueOrDefault():dd.MM.yyyy} krank und ist nicht im Büro.";
+                mailClient.SendMail(colleagueMailAddresses, "Krankmeldung", message);
+
+                var msg = $"Ich habe Deine Kollegen eine Mail gesendet, daß Du bis zum {notificationOfIllnessDetails.SickUntil?.ToString("dd.MM.yyyy")} krank bist.";
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(msg, msg, InputHints.IgnoringInput), cancellationToken);
+            }
+
             return await stepContext.NextAsync(notificationOfIllnessDetails, cancellationToken);
         }
 
         private async Task<DialogTurnResult> ShowAppointmentsAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Result;
-            stepContext.Values.Add(nameof(NotificationOfIllnessDetails), notificationOfIllnessDetails);
             var appointments = new Appointments(notificationOfIllnessDetails.TokenResponse, m_ExchangeSettings);
             var appointmentList = appointments.GetAppointments(notificationOfIllnessDetails.SickUntil.GetValueOrDefault());
             if (appointmentList.Count == 0)
@@ -72,9 +101,9 @@ namespace SickBot.Dialogs
         }
         private async Task<DialogTurnResult> FinalStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            if ((bool)stepContext.Result && stepContext.Values.TryGetValue(nameof(NotificationOfIllnessDetails), out object tmp))
+            if ((bool)stepContext.Result)
             {
-                var notificationOfIllnessDetails = (NotificationOfIllnessDetails)tmp;
+                var notificationOfIllnessDetails = (NotificationOfIllnessDetails)stepContext.Options;
                 var cancelMessage = $"Dies ist eine automatisch generierte Nachricht. {notificationOfIllnessDetails.TokenResponse.GetNameClaim()?.Value} ist bis zum {notificationOfIllnessDetails.SickUntil.GetValueOrDefault():dd.MM.yyyy} krank und kann nicht teilnehmen.";
                 var appointments = new Appointments(notificationOfIllnessDetails.TokenResponse, m_ExchangeSettings);
                 appointments.CancelAllAppointments(notificationOfIllnessDetails.SickUntil.GetValueOrDefault(), cancelMessage);

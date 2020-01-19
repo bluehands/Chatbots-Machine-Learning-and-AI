@@ -117,8 +117,20 @@ We have a special activity handler for teams which handle teams specialties. Now
 
 ## Add Exchange support
 
+Check out the **05_add_exchange_support** branch.
+
 We will use the Exchange Web Service API to get the list of appointments, cancel them and send mails. Add the *Microsoft.Exchange.WebServices* Nuget package to the project
 
 To get the list of appointments and to send mails we will impersonate to the current user. In order to get the current user, we use the jwt-token and parse it. Add the *System.IdentityModel.Tokens.Jwt* to the project and parse the token. The *upn* claim contains the user Id to impersonate.
 
 See the *ExchangeClient*, *Appointments* and *ExchangeMailClient* class for details.
+
+## Add MS Graph support
+
+Check out the **06_add_graph_support** branch.
+
+We will now use the Graph API to get the list of Teams the user has joined. With this information we will get a list of persons working with the user.
+
+We add the Microsoft.Graph Nuget-Package and update the Application registration in Azure AD for the needed permissions.
+
+See the Graph Explorer (https://developer.microsoft.com/en-us/graph/graph-explorer/preview) for how to use the API and which permissions are needed.
