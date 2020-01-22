@@ -39,17 +39,17 @@ namespace SickBot
 
         private async Task<IEnumerable<string>> GetMyColleagueAttributes(UserAttribute attribute)
         {
-            var mailAddresses = new List<string>();
+            var attributes = new List<string>();
             var joinedTeams = await m_GraphClient.Me.JoinedTeams
                 .Request()
                 .GetAsync();
 
             foreach (var joinedTeam in joinedTeams)
             {
-                mailAddresses.AddRange(await GetAttributeOfTeam(joinedTeam, attribute));
+                attributes.AddRange(await GetAttributeOfTeam(joinedTeam, attribute));
             }
 
-            return mailAddresses.Distinct();
+            return attributes.Distinct();
         }
 
         private async Task<IEnumerable<string>> GetAttributeOfTeam(Group joinedTeam, UserAttribute attribute)
