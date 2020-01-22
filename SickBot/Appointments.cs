@@ -1,45 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Bot.Schema;
+using System.Threading.Tasks;
 
 namespace SickBot
 {
-    public class Appointments 
+    public class Appointments
     {
-        private readonly ExchangeClient m_ExchangeClient;
+        private readonly string m_Token;
+        private readonly DateTime m_AppointmentsUntil;
 
-        public Appointments(TokenResponse tokenResponse, ExchangeSettings settings) 
+        public Appointments(string token, DateTime appointmentsUntil)
         {
-            m_ExchangeClient = new ExchangeClient(new Uri(settings.ConnectionUrl), new System.Net.NetworkCredential(settings.ConnectionUserName, settings.ConnectionUserPassword), tokenResponse.GetUPNClaim().Value);
-        }
-        public List<Appointment> GetAppointments(DateTime meetingsUntil)
-        {
-            return m_ExchangeClient.GetMeetings(DateTime.Today, meetingsUntil).Select(
-                m => new Appointment
-                {
-                    Id = m.MeetingId,
-                    Subject = m.Subject,
-                    Start = m.Start,
-                    End = m.End
-                }).ToList();
+            m_Token = token;
+            m_AppointmentsUntil = appointmentsUntil;
         }
 
-        public void CancelAllAppointments(DateTime meetingsUntil, string cancelMessage)
+        public List<Appointment> GetAppointments()
         {
-            foreach (var meeting in m_ExchangeClient.GetMeetings(DateTime.Today, meetingsUntil))
+            return new List<Appointment>
             {
-                m_ExchangeClient.CancelMeeting(meeting.MeetingId, cancelMessage);
-            }
+                new Appointment(m_Token) {Title = "Treffen mit Lars", Start = GetFullDate(DateTime.Now.AddHours(2)), End = GetFullDate(DateTime.Now.AddHours(3))},
+                new Appointment(m_Token) {Title = "Daily", Start = GetFullDate(DateTime.Now.AddHours(25)), End =GetFullDate( DateTime.Now.AddHours(26))}
+            };
+        }
+
+        public DateTime GetFullDate(DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day, date.Hour, 0, 0);
         }
     }
-
     public class Appointment
     {
-        public string Id { get; set; }
-        public string Subject { get; set; }
+        private readonly string m_Token;
+
+        public Appointment(string token)
+        {
+            m_Token = token;
+        }
+        public string Title { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public void Cancel()
+        {
+
+        }
 
     }
 }

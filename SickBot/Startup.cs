@@ -29,10 +29,7 @@ namespace SickBot
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
-            var exchangeSettings = new ExchangeSettings {ConnectionUrl = Configuration["EWSConnectionUrl"], ConnectionUserName = Configuration["EWSConnectionUserName"], ConnectionUserPassword = Configuration["EWSConnectionUserPassword"]};
-            services.AddSingleton(exchangeSettings);
-            
+
             // Create the Bot Framework Adapter.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
