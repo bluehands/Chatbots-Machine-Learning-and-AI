@@ -117,7 +117,7 @@ We have a special activity handler for teams which handle teams specialties. Now
 
 ## Add Exchange support
 
-Check out the **05_add_exchange_support** branch.
+Check out the **06_add_exchange_support** branch.
 
 We will use the Exchange Web Service API to get the list of appointments, cancel them and send mails. Add the *Microsoft.Exchange.WebServices* Nuget package to the project
 
@@ -127,7 +127,7 @@ See the *ExchangeClient*, *Appointments* and *ExchangeMailClient* class for deta
 
 ## Add MS Graph support
 
-Check out the **06_add_graph_support** branch.
+Check out the **07_add_graph_support** branch.
 
 We will now use the Graph API to get the list of Teams the user has joined. With this information we will get a list of persons working with the user.
 
