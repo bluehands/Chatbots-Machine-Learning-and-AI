@@ -46,13 +46,13 @@ namespace SickBot
             Microsoft.Exchange.WebServices.Data.Appointment meeting = Microsoft.Exchange.WebServices.Data.Appointment.Bind(m_Service, meetingId, new PropertySet(AppointmentSchema.MyResponseType));
             if (meeting.MyResponseType == MeetingResponseType.Organizer)
             {
-                meeting.CancelMeeting(cancelMessage);
+                //meeting.CancelMeeting(cancelMessage);
             }
             else if (meeting.MyResponseType == MeetingResponseType.Accept || meeting.MyResponseType == MeetingResponseType.NoResponseReceived || meeting.MyResponseType == MeetingResponseType.Tentative)
             {
                 var declineMessage = meeting.CreateDeclineMessage();
                 declineMessage.Body = new MessageBody(cancelMessage);
-                declineMessage.SendAndSaveCopy();
+                //declineMessage.SendAndSaveCopy();
             }
         }
         public void SendMail(IEnumerable<string> toRecipients, string subject, string body)
@@ -61,7 +61,7 @@ namespace SickBot
             email.ToRecipients.AddRange(toRecipients);
             email.Subject = subject;
             email.Body = new MessageBody(body);
-            email.Send();
+            //email.Send();
         }
     }
     public class Meeting
