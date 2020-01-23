@@ -13,7 +13,7 @@ namespace SickBot
         }
         public void SendMail(string recipientAddress,string subject, string message)
         {
-            m_ExchangeClient.SendMail(new[] { recipientAddress }, "Krankmeldung", message);
+            m_ExchangeClient.SendMail(new[] { recipientAddress }, subject, message);
         }
     }
 }
