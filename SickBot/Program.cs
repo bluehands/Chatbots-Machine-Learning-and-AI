@@ -23,7 +23,7 @@ namespace SickBot
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    //if (context.HostingEnvironment.IsProduction())
+                    if (context.HostingEnvironment.IsProduction())
                     {
                         var uri = config.Build()["AzureKeyVaultUrl"];
                         var azureServiceTokenProvider = new AzureServiceTokenProvider();
