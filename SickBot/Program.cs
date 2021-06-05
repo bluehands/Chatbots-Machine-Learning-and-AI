@@ -23,13 +23,13 @@ namespace SickBot
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    if (context.HostingEnvironment.IsProduction())
-                    {
-                        var uri = config.Build()["AzureKeyVaultUrl"];
-                        var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                        var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-                        config.AddAzureKeyVault(uri, keyVaultClient, new DefaultKeyVaultSecretManager());
-                    }
+                    //if (context.HostingEnvironment.IsProduction())
+                    //{
+                    //    var uri = config.Build()["AzureKeyVaultUrl"];
+                    //    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    //    var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                    //    config.AddAzureKeyVault(uri, keyVaultClient, new DefaultKeyVaultSecretManager());
+                    //}
                 })
                 .UseStartup<Startup>();
     }
