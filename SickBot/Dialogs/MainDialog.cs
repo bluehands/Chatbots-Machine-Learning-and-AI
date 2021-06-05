@@ -57,12 +57,12 @@ namespace SickBot.Dialogs
             // token directly from the prompt itself.
             if (stepContext.Result is TokenResponse tokenResponse)
             {
-                var conversationData = await m_UserStateAccessors.GetAsync(stepContext.Context, () => new UserData(), cancellationToken);
-                conversationData.TokenResponse = tokenResponse;
-                if (!conversationData.HasShownToken)
+                var userDataData = await m_UserStateAccessors.GetAsync(stepContext.Context, () => new UserData(), cancellationToken);
+                userDataData.TokenResponse = tokenResponse;
+                if (!userDataData.HasShownToken)
                 {
-                    conversationData.HasShownToken = true;
-                    await m_UserStateAccessors.SetAsync(stepContext.Context, conversationData, cancellationToken);
+                    userDataData.HasShownToken = true;
+                    await m_UserStateAccessors.SetAsync(stepContext.Context, userDataData, cancellationToken);
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text("Du bist angemeldet"), cancellationToken);
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(tokenResponse.Token), cancellationToken);
                 }
