@@ -37,7 +37,7 @@ namespace SickBot
                 },
                 ToRecipients = new List<Recipient>(recipientAddress.Select(r => new Recipient { EmailAddress = new EmailAddress { Address = r } }))
             };
-            await m_GraphClient.Me.SendMail(mailMessage, false).Request().PostAsync();
+            //await m_GraphClient.Me.SendMail(mailMessage, false).Request().PostAsync();
         }
     }
 }
